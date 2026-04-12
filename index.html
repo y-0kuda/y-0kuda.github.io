@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ドキュメント</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --sidebar-width: 260px;
+        --topbar-height: 56px;
+        --color-bg: #ffffff;
+        --color-bg-sidebar: #f8f9fa;
+        --color-border: #dee2e6;
+        --color-text: #212529;
+        --color-text-muted: #6c757d;
+        --color-accent: #0d6efd;
+        --color-accent-light: #e7f1ff;
+        --color-accent-hover: #0a58ca;
+        --color-link: #0d6efd;
+        --color-heading: #212529;
+        --color-code-bg: #f1f3f5;
+        --color-code-text: #d63384;
+        --color-pre-bg: #1e1e2e;
+        --color-pre-text: #cdd6f4;
+        --color-blockquote-border: #0d6efd;
+        --color-blockquote-bg: #e7f1ff;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-bg: #1a1b1e;
+          --color-bg-sidebar: #141517;
+          --color-border: #2d2f33;
+          --color-text: #c9d1d9;
+          --color-text-muted: #8b949e;
+          --color-accent: #4da3ff;
+          --color-accent-light: #1c2d42;
+          --color-accent-hover: #79bbff;
+          --color-link: #4da3ff;
+          --color-heading: #f0f6fc;
+          --color-code-bg: #2d2f33;
+          --color-code-text: #f778ba;
+          --color-blockquote-border: #4da3ff;
+          --color-blockquote-bg: #1c2d42;
+        }
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--color-text);
+        background: var(--color-bg);
+      }
+
+      /* ===== TOP NAV ===== */
+      .topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--topbar-height);
+        background: var(--color-bg);
+        border-bottom: 1px solid var(--color-border);
+        display: flex;
+        align-items: center;
+        padding: 0 1.25rem;
+        gap: 1rem;
+        z-index: 1000;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .topbar-brand {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--color-accent);
+        text-decoration: none;
+        letter-spacing: -0.3px;
+        white-space: nowrap;
+      }
+
+      .topbar-search {
+        flex: 1;
+        max-width: 420px;
+        margin-left: auto;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+
+      .topbar-search input {
+        width: 100%;
+        height: 32px;
+        padding: 0 12px 0 36px;
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        background: var(--color-bg-sidebar);
+        color: var(--color-text);
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s;
+        box-sizing: border-box;
+      }
+
+      .topbar-search:has(#search-controls.visible) input {
+        border-radius: 6px 0 0 6px;
+      }
+
+      .topbar-search input:focus {
+        border-color: var(--color-accent);
+      }
+
+      .topbar-search > svg {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: var(--color-text-muted);
+        stroke-width: 2;
+        stroke-linecap: round;
+        pointer-events: none;
+      }
+
+      .search-count {
+        display: none;
+        font-size: 12px;
+        color: var(--color-text-muted);
+        white-space: nowrap;
+        padding: 0 8px;
+        min-width: 64px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        border-right: 1px solid var(--color-border);
+        flex-shrink: 0;
+      }
+
+      .search-count.visible {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .search-count.no-match {
+        color: #e74c3c;
+      }
+
+      .search-controls {
+        display: none;
+        flex-shrink: 0;
+        align-items: center;
+        border: 1px solid var(--color-border);
+        border-left: none;
+        border-radius: 0 6px 6px 0;
+        background: var(--color-bg-sidebar);
+        height: 32px;
+        overflow: hidden;
+      }
+
+      .search-controls.visible {
+        display: flex;
+      }
+
+      .search-nav-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--color-text-muted);
+        width: 32px;
+        min-width: 32px;
+        max-width: 32px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
+
+      .search-nav-btn:hover {
+        background: var(--color-accent-light);
+        color: var(--color-accent);
+      }
+      .search-nav-btn:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+      .search-nav-btn:disabled:hover {
+        background: none;
+        color: var(--color-text-muted);
+      }
+      .search-nav-btn svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+      }
+
+      .search-clear-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--color-text-muted);
+        width: 30px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
+
+      .search-clear-btn:hover {
+        background: var(--color-accent-light);
+        color: var(--color-accent);
+      }
+      .search-clear-btn svg {
+        width: 13px;
+        height: 13px;
+        display: block;
+      }
+
+      mark.search-hit {
+        background: #fff176;
+        color: #000;
+        border-radius: 2px;
+        padding: 0 1px;
+      }
+
+      mark.search-hit.current {
+        background: #ff9800;
+        color: #000;
+        outline: 2px solid #e65100;
+        outline-offset: 1px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        mark.search-hit {
+          background: #665c00;
+          color: #ffe082;
+        }
+        mark.search-hit.current {
+          background: #bf6000;
+          color: #fff;
+          outline-color: #ff9800;
+        }
+      }
+
+      .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        color: var(--color-text);
+        border-radius: 6px;
+      }
+
+      .hamburger:hover {
+        background: var(--color-accent-light);
+      }
+
+      .hamburger svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+      }
+
+      /* ===== OVERLAY ===== */
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 899;
+      }
+
+      .overlay.active {
+        display: block;
+      }
+
+      /* ===== LAYOUT ===== */
+      .layout {
+        display: flex;
+        margin-top: var(--topbar-height);
+        min-height: calc(100vh - var(--topbar-height));
+      }
+
+      /* ===== SIDEBAR ===== */
+      .sidebar {
+        width: var(--sidebar-width);
+        flex-shrink: 0;
+        position: fixed;
+        top: var(--topbar-height);
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        background: var(--color-bg-sidebar);
+        border-right: 1px solid var(--color-border);
+        padding: 1.5rem 0 2rem;
+        z-index: 900;
+        transition: transform 0.25s ease;
+      }
+
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: var(--color-border);
+        border-radius: 4px;
+      }
+
+      .sidebar-section {
+        margin-bottom: 1.75rem;
+      }
+
+      .sidebar-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        padding: 0 1.25rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .sidebar-nav {
+        list-style: none;
+      }
+
+      .sidebar-nav a {
+        display: block;
+        padding: 5px 1.25rem;
+        font-size: 14px;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        transition:
+          color 0.12s,
+          background 0.12s,
+          border-color 0.12s;
+      }
+
+      .sidebar-nav a:hover {
+        color: var(--color-text);
+        background: rgba(13, 110, 253, 0.06);
+      }
+
+      .sidebar-nav a.active {
+        color: var(--color-accent);
+        border-left-color: var(--color-accent);
+        background: var(--color-accent-light);
+        font-weight: 500;
+      }
+
+      /* ===== MAIN CONTENT ===== */
+      .main {
+        margin-left: var(--sidebar-width);
+        flex: 1;
+        min-width: 0;
+        padding: 2.5rem 3rem 4rem;
+        max-width: 860px;
+      }
+
+      /* ===== CONTENT TYPOGRAPHY ===== */
+      .content h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-heading);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+      }
+
+      .content .lead {
+        font-size: 1.15rem;
+        color: var(--color-text-muted);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+
+      .content h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--color-heading);
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .content h3 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--color-heading);
+        margin-top: 1.75rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .content p {
+        margin-bottom: 1rem;
+      }
+
+      .content a {
+        color: var(--color-link);
+        text-decoration: none;
+      }
+
+      .content a:hover {
+        text-decoration: underline;
+      }
+
+      .content code {
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.875em;
+        background: var(--color-code-bg);
+        color: var(--color-code-text);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      .content pre {
+        background: var(--color-pre-bg);
+        color: var(--color-pre-text);
+        border-radius: 8px;
+        padding: 1.25rem 1.5rem;
+        overflow-x: auto;
+        margin: 1.25rem 0;
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+
+      .content pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+        font-size: inherit;
+      }
+
+      .content ul,
+      .content ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .content li {
+        margin-bottom: 0.3rem;
+      }
+
+      .content blockquote {
+        border-left: 4px solid var(--color-blockquote-border);
+        background: var(--color-blockquote-bg);
+        padding: 1rem 1.25rem;
+        border-radius: 0 6px 6px 0;
+        margin: 1.25rem 0;
+        color: var(--color-text);
+      }
+
+      .content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.25rem 0;
+        font-size: 0.9rem;
+      }
+
+      .content th {
+        background: var(--color-bg-sidebar);
+        border: 1px solid var(--color-border);
+        padding: 8px 12px;
+        text-align: left;
+        font-weight: 600;
+      }
+
+      .content td {
+        border: 1px solid var(--color-border);
+        padding: 8px 12px;
+      }
+
+      .content tr:nth-child(even) td {
+        background: var(--color-bg-sidebar);
+      }
+
+      .badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+        vertical-align: middle;
+        margin-left: 6px;
+      }
+
+      .badge-new {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-beta {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-deprecated {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .badge-new {
+          background: #064e3b;
+          color: #6ee7b7;
+        }
+        .badge-beta {
+          background: #78350f;
+          color: #fcd34d;
+        }
+        .badge-deprecated {
+          background: #7f1d1d;
+          color: #fca5a5;
+        }
+      }
+
+      /* ===== ARTICLE SECTIONS ===== */
+      .article-section {
+        display: none;
+      }
+      .article-section.active {
+        display: block;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 992px) {
+        .main {
+          padding: 2rem 1.5rem 3rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hamburger {
+          display: flex;
+        }
+
+        .sidebar {
+          transform: translateX(-100%);
+        }
+
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .main {
+          margin-left: 0;
+          padding: 1.5rem 1.25rem 3rem;
+        }
+
+        .topbar-search {
+          display: none;
+        }
+
+        .content h1 {
+          font-size: 1.6rem;
+        }
+      }
+
+      /* ===== SCROLL TO TOP ===== */
+      .scroll-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 40px;
+        height: 40px;
+        background: var(--color-accent);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+        z-index: 500;
+      }
+
+      .scroll-top.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .scroll-top:hover {
+        background: var(--color-accent-hover);
+      }
+      .scroll-top svg {
+        width: 18px;
+        height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP NAV -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="メニューを開く">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <a
+        href="#"
+        class="topbar-brand"
+        onclick="
+          navigate('introduction');
+          return false;
+        "
+        >📘 MyDocs</a
+      >
+      <div class="topbar-search">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          type="text"
+          placeholder="ドキュメントを全文検索..."
+          id="search-input"
+          autocomplete="off"
+        />
+        <div class="search-controls" id="search-controls">
+          <span class="search-count" id="search-count"></span>
+          <button class="search-nav-btn" id="search-prev" title="前へ" disabled>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <span
+            style="
+              width: 1px;
+              background: var(--color-border);
+              align-self: stretch;
+              flex-shrink: 0;
+            "
+          ></span>
+          <button class="search-nav-btn" id="search-next" title="次へ" disabled>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+          <button class="search-clear-btn" id="search-clear" title="クリア">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-title">はじめに</div>
+          <ul class="sidebar-nav" id="nav">
+            <li>
+              <a href="#" data-page="introduction" class="active"
+                >イントロダクション</a
+              >
+            </li>
+            <li><a href="#" data-page="quickstart">クイックスタート</a></li>
+            <li><a href="#" data-page="installation">インストール</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">コアコンセプト</div>
+          <ul class="sidebar-nav">
+            <li><a href="#" data-page="components">コンポーネント</a></li>
+            <li><a href="#" data-page="layout">レイアウト</a></li>
+            <li><a href="#" data-page="typography">タイポグラフィ</a></li>
+            <li><a href="#" data-page="colors">カラーシステム</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">ガイド</div>
+          <ul class="sidebar-nav">
+            <li><a href="#" data-page="responsive">レスポンシブ対応</a></li>
+            <li>
+              <a href="#" data-page="darkmode"
+                >ダークモード<span class="badge badge-new">NEW</span></a
+              >
+            </li>
+            <li><a href="#" data-page="accessibility">アクセシビリティ</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">リファレンス</div>
+          <ul class="sidebar-nav">
+            <li><a href="#" data-page="api">API リファレンス</a></li>
+            <li>
+              <a href="#" data-page="changelog"
+                >更新履歴<span class="badge badge-beta">BETA</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main">
+        <div class="content">
+          <!-- イントロダクション -->
+          <div class="article-section active" id="page-introduction">
+            <h1>イントロダクション</h1>
+            <p class="lead">
+              MyDocs
+              へようこそ。このドキュメントでは、フレームワークの基本的な使い方からアドバンスドな機能まで、丁寧に解説します。
+            </p>
+
+            <h2>概要</h2>
+            <p>
+              MyDocs はモダンな Web
+              アプリケーション開発のための包括的なフレームワークです。シンプルなコンセプトに基づきながら、プロダクションレベルの機能を提供します。
+            </p>
+            <blockquote>
+              💡 初めての方は<a href="#" data-link="quickstart"
+                >クイックスタート</a
+              >から始めることをお勧めします。
+            </blockquote>
+
+            <h2>特徴</h2>
+            <ul>
+              <li>
+                <strong>軽量</strong> — コア部分はわずか 12KB (gzip 圧縮後)
+              </li>
+              <li><strong>型安全</strong> — TypeScript ファーストの設計</li>
+              <li><strong>ゼロ依存</strong> — 外部ライブラリへの依存なし</li>
+              <li>
+                <strong>プラグイン対応</strong> — 柔軟なプラグインシステム
+              </li>
+            </ul>
+
+            <h2>基本的な使い方</h2>
+            <p>CDN 経由で即座に利用できます。</p>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;script src="https://cdn.example.com/mydocs.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="app"&gt;&lt;/div&gt;
+  &lt;script&gt;
+    MyDocs.init('#app');
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <h2>ブラウザサポート</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>ブラウザ</th>
+                  <th>バージョン</th>
+                  <th>サポート</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Chrome</td>
+                  <td>90+</td>
+                  <td>✅ 完全対応</td>
+                </tr>
+                <tr>
+                  <td>Firefox</td>
+                  <td>88+</td>
+                  <td>✅ 完全対応</td>
+                </tr>
+                <tr>
+                  <td>Safari</td>
+                  <td>14+</td>
+                  <td>✅ 完全対応</td>
+                </tr>
+                <tr>
+                  <td>Edge</td>
+                  <td>90+</td>
+                  <td>✅ 完全対応</td>
+                </tr>
+                <tr>
+                  <td>IE 11</td>
+                  <td>—</td>
+                  <td>❌ 非対応</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>次のステップ</h3>
+            <p>
+              <a href="#" data-link="quickstart">クイックスタートガイド</a
+              >に進んで、最初のプロジェクトを作成しましょう。
+            </p>
+          </div>
+
+          <!-- クイックスタート -->
+          <div class="article-section" id="page-quickstart">
+            <h1>クイックスタート</h1>
+            <p class="lead">5分で最初のアプリを動かしましょう。</p>
+
+            <h2>Step 1: インストール</h2>
+            <pre><code>npm install mydocs</code></pre>
+
+            <h2>Step 2: 初期化</h2>
+            <pre><code>import { MyDocs } from 'mydocs';
+
+const app = new MyDocs({
+  target: '#app',
+  theme: 'light',
+  debug: false,
+});</code></pre>
+
+            <h2>Step 3: 動作確認</h2>
+            <p>
+              ブラウザで <code>http://localhost:3000</code> を開いてください。
+            </p>
+            <blockquote>
+              🎉 おめでとうございます！最初のアプリが完成しました。
+            </blockquote>
+          </div>
+
+          <!-- インストール -->
+          <div class="article-section" id="page-installation">
+            <h1>インストール</h1>
+            <p class="lead">複数の方法でインストールできます。</p>
+
+            <h2>npm / yarn / pnpm</h2>
+            <pre><code># npm
+npm install mydocs
+
+# yarn
+yarn add mydocs
+
+# pnpm
+pnpm add mydocs</code></pre>
+
+            <h2>CDN</h2>
+            <pre><code>&lt;script src="https://cdn.example.com/<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e38e9a878c8090a3d1cdd3cdd3">[email&#160;protected]</a>/dist/mydocs.min.js"&gt;&lt;/script&gt;</code></pre>
+
+            <h2>動作要件</h2>
+            <ul>
+              <li>Node.js 18.0 以上</li>
+              <li>npm 9.0 以上 / yarn 3.0 以上</li>
+            </ul>
+          </div>
+
+          <!-- コンポーネント -->
+          <div class="article-section" id="page-components">
+            <h1>コンポーネント</h1>
+            <p class="lead">再利用可能な UI コンポーネント群を紹介します。</p>
+
+            <h2>Button</h2>
+            <pre><code>&lt;MyButton variant="primary" size="md"&gt;クリック&lt;/MyButton&gt;</code></pre>
+
+            <h2>Card</h2>
+            <pre><code>&lt;MyCard title="タイトル" shadow&gt;
+  コンテンツ
+&lt;/MyCard&gt;</code></pre>
+          </div>
+
+          <!-- レイアウト -->
+          <div class="article-section" id="page-layout">
+            <h1>レイアウト</h1>
+            <p class="lead">
+              フレキシブルなグリッドシステムで柔軟なレイアウトを実現します。
+            </p>
+
+            <h2>グリッド</h2>
+            <p>12カラムのグリッドシステムを採用しています。</p>
+            <pre><code>&lt;Grid cols={12} gap={4}&gt;
+  &lt;Col span={6}&gt;左&lt;/Col&gt;
+  &lt;Col span={6}&gt;右&lt;/Col&gt;
+&lt;/Grid&gt;</code></pre>
+
+            <h2>Flexbox ユーティリティ</h2>
+            <pre><code>&lt;Flex align="center" justify="between"&gt;
+  ...
+&lt;/Flex&gt;</code></pre>
+          </div>
+
+          <!-- タイポグラフィ -->
+          <div class="article-section" id="page-typography">
+            <h1>タイポグラフィ</h1>
+            <p class="lead">読みやすく美しいタイポグラフィシステムです。</p>
+
+            <h2>見出し</h2>
+            <p>
+              <code>h1</code> から
+              <code>h6</code> まで、一貫したスケールが設定されています。
+            </p>
+
+            <h2>フォントサイズ</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>クラス</th>
+                  <th>サイズ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>text-xs</code></td>
+                  <td>12px</td>
+                </tr>
+                <tr>
+                  <td><code>text-sm</code></td>
+                  <td>14px</td>
+                </tr>
+                <tr>
+                  <td><code>text-base</code></td>
+                  <td>16px</td>
+                </tr>
+                <tr>
+                  <td><code>text-lg</code></td>
+                  <td>18px</td>
+                </tr>
+                <tr>
+                  <td><code>text-xl</code></td>
+                  <td>20px</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- カラーシステム -->
+          <div class="article-section" id="page-colors">
+            <h1>カラーシステム</h1>
+            <p class="lead">一貫性のあるデザインを実現するカラーパレット。</p>
+
+            <h2>プライマリカラー</h2>
+            <ul>
+              <li><code>primary</code> — メインアクションに使用</li>
+              <li><code>secondary</code> — サブアクションに使用</li>
+              <li><code>accent</code> — 強調表示に使用</li>
+            </ul>
+
+            <h2>セマンティックカラー</h2>
+            <ul>
+              <li><code>success</code> — 成功・完了の状態</li>
+              <li><code>warning</code> — 注意が必要な状態</li>
+              <li><code>danger</code> — エラー・危険な状態</li>
+              <li><code>info</code> — 情報・通知</li>
+            </ul>
+          </div>
+
+          <!-- レスポンシブ -->
+          <div class="article-section" id="page-responsive">
+            <h1>レスポンシブ対応</h1>
+            <p class="lead">
+              モバイルファーストのブレークポイントシステムで、あらゆるデバイスに対応します。
+            </p>
+
+            <h2>ブレークポイント</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>名前</th>
+                  <th>幅</th>
+                  <th>接頭辞</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>xs</td>
+                  <td>〜 479px</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>sm</td>
+                  <td>480px〜</td>
+                  <td><code>sm:</code></td>
+                </tr>
+                <tr>
+                  <td>md</td>
+                  <td>768px〜</td>
+                  <td><code>md:</code></td>
+                </tr>
+                <tr>
+                  <td>lg</td>
+                  <td>1024px〜</td>
+                  <td><code>lg:</code></td>
+                </tr>
+                <tr>
+                  <td>xl</td>
+                  <td>1280px〜</td>
+                  <td><code>xl:</code></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h2>使用例</h2>
+            <pre><code>&lt;div class="w-full md:w-1/2 lg:w-1/3"&gt;
+  レスポンシブなカラム
+&lt;/div&gt;</code></pre>
+          </div>
+
+          <!-- ダークモード -->
+          <div class="article-section" id="page-darkmode">
+            <h1>ダークモード <span class="badge badge-new">NEW</span></h1>
+            <p class="lead">OS 設定と連動したダークモードをサポートします。</p>
+
+            <h2>自動切り替え</h2>
+            <p>
+              <code>prefers-color-scheme</code> メディアクエリを使って、OS
+              の設定に自動的に追従します。
+            </p>
+            <pre><code>@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1a1b1e;
+    --color-text: #c9d1d9;
+  }
+}</code></pre>
+
+            <h2>手動切り替え</h2>
+            <pre><code>MyDocs.setTheme('dark');  // ダーク
+MyDocs.setTheme('light'); // ライト
+MyDocs.setTheme('auto');  // OS 設定に追従</code></pre>
+          </div>
+
+          <!-- アクセシビリティ -->
+          <div class="article-section" id="page-accessibility">
+            <h1>アクセシビリティ</h1>
+            <p class="lead">
+              WCAG 2.1 AA 準拠のアクセシブルなコンポーネントを提供します。
+            </p>
+
+            <h2>キーボードナビゲーション</h2>
+            <p>すべてのインタラクティブ要素はキーボードで操作できます。</p>
+
+            <h2>ARIA 属性</h2>
+            <pre><code>&lt;button aria-label="閉じる" aria-expanded="false"&gt;
+  &lt;Icon name="close" aria-hidden="true" /&gt;
+&lt;/button&gt;</code></pre>
+
+            <h2>フォーカス管理</h2>
+            <p>
+              モーダルやドロワーを開いた際に、適切なフォーカス管理が自動的に行われます。
+            </p>
+          </div>
+
+          <!-- API リファレンス -->
+          <div class="article-section" id="page-api">
+            <h1>API リファレンス</h1>
+            <p class="lead">全 API の詳細なリファレンスです。</p>
+
+            <h2><code>MyDocs.init(selector, options)</code></h2>
+            <p>アプリケーションを初期化します。</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>パラメータ</th>
+                  <th>型</th>
+                  <th>説明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>selector</code></td>
+                  <td><code>string</code></td>
+                  <td>マウント先の CSS セレクタ</td>
+                </tr>
+                <tr>
+                  <td><code>options</code></td>
+                  <td><code>Options</code></td>
+                  <td>設定オブジェクト（任意）</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h2><code>MyDocs.setTheme(theme)</code></h2>
+            <p>テーマを変更します。</p>
+            <pre><code>MyDocs.setTheme('dark' | 'light' | 'auto')</code></pre>
+
+            <h2><code>MyDocs.destroy()</code></h2>
+            <p>インスタンスを破棄し、イベントリスナーを解除します。</p>
+          </div>
+
+          <!-- 更新履歴 -->
+          <div class="article-section" id="page-changelog">
+            <h1>更新履歴 <span class="badge badge-beta">BETA</span></h1>
+            <p class="lead">バージョンごとの変更内容をまとめています。</p>
+
+            <h2>v2.1.0 — 2025-03-15</h2>
+            <ul>
+              <li>ダークモードの自動切り替えに対応</li>
+              <li><code>setTheme()</code> API を追加</li>
+              <li>パフォーマンスを 20% 改善</li>
+            </ul>
+
+            <h2>v2.0.0 — 2025-01-10</h2>
+            <ul>
+              <li>TypeScript 完全対応</li>
+              <li>プラグインシステムの刷新</li>
+              <li>IE 11 サポートを終了</li>
+            </ul>
+
+            <h2>v1.9.3 — 2024-11-22</h2>
+            <ul>
+              <li>セキュリティパッチの適用</li>
+              <li>バグ修正 3件</li>
+            </ul>
+          </div>
+        </div>
+        <!-- /.content -->
+      </main>
+    </div>
+
+    <!-- スクロールトップボタン -->
+    <button class="scroll-top" id="scroll-top" aria-label="ページトップへ">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="18 15 12 9 6 15" />
+      </svg>
+    </button>
+
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("overlay");
+      const hamburger = document.getElementById("hamburger");
+      const scrollTopBtn = document.getElementById("scroll-top");
+      const searchInput = document.getElementById("search-input");
+      const searchControls = document.getElementById("search-controls");
+      const searchCount = document.getElementById("search-count");
+      const searchPrev = document.getElementById("search-prev");
+      const searchNext = document.getElementById("search-next");
+      const searchClear = document.getElementById("search-clear");
+
+      // ===== ハンバーガーメニュー =====
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("active");
+      });
+
+      overlay.addEventListener("click", closeSidebar);
+
+      function closeSidebar() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
+      }
+
+      // ===== 各ページの元HTMLを保存 =====
+      const pageOriginals = {};
+      document.querySelectorAll(".article-section").forEach((sec) => {
+        pageOriginals[sec.id] = sec.innerHTML;
+      });
+
+      // ===== ナビゲーション =====
+      function navigate(page) {
+        clearSearch();
+        document
+          .querySelectorAll(".article-section")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll(".sidebar-nav a")
+          .forEach((a) => a.classList.remove("active"));
+        const section = document.getElementById("page-" + page);
+        if (section) section.classList.add("active");
+        const link = document.querySelector(
+          '.sidebar-nav a[data-page="' + page + '"]',
+        );
+        if (link) link.classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        closeSidebar();
+      }
+
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("#search-controls")) return;
+        const link = e.target.closest("[data-page]");
+        if (link) {
+          e.preventDefault();
+          navigate(link.dataset.page);
+          return;
+        }
+        const inlineLink = e.target.closest("[data-link]");
+        if (inlineLink) {
+          e.preventDefault();
+          navigate(inlineLink.dataset.link);
+        }
+      });
+
+      // ===== スクロールトップ =====
+      window.addEventListener("scroll", () => {
+        scrollTopBtn.classList.toggle("visible", window.scrollY > 300);
+      });
+      scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // ===== 全文検索 =====
+      let allHits = [];
+      let currentHit = -1;
+
+      function escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      function highlightInNode(node, regex) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent;
+          regex.lastIndex = 0;
+          if (!regex.test(text)) return;
+          regex.lastIndex = 0;
+          const frag = document.createDocumentFragment();
+          let last = 0,
+            m;
+          while ((m = regex.exec(text)) !== null) {
+            if (m.index > last)
+              frag.appendChild(
+                document.createTextNode(text.slice(last, m.index)),
+              );
+            const mark = document.createElement("mark");
+            mark.className = "search-hit";
+            mark.textContent = m[0];
+            frag.appendChild(mark);
+            last = regex.lastIndex;
+          }
+          if (last < text.length)
+            frag.appendChild(document.createTextNode(text.slice(last)));
+          node.parentNode.replaceChild(frag, node);
+          return;
+        }
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName;
+          if (
+            tag === "MARK" ||
+            tag === "SCRIPT" ||
+            tag === "STYLE" ||
+            tag === "PRE"
+          )
+            return;
+          Array.from(node.childNodes).forEach((child) =>
+            highlightInNode(child, regex),
+          );
+        }
+      }
+
+      function runSearch(q) {
+        document.querySelectorAll(".article-section").forEach((sec) => {
+          sec.innerHTML = pageOriginals[sec.id];
+        });
+        allHits = [];
+        currentHit = -1;
+
+        if (!q) {
+          searchControls.classList.remove("visible");
+          searchCount.classList.remove("visible");
+          searchCount.classList.remove("no-match");
+          return;
+        }
+
+        const regex = new RegExp(escapeRegex(q), "gi");
+        document.querySelectorAll(".article-section").forEach((sec) => {
+          highlightInNode(sec, regex);
+        });
+
+        allHits = Array.from(
+          document.querySelectorAll(".article-section mark.search-hit"),
+        );
+        searchControls.classList.add("visible");
+        searchCount.classList.add("visible");
+
+        if (allHits.length === 0) {
+          searchCount.textContent = "0件";
+          searchCount.classList.add("no-match");
+          searchPrev.disabled = true;
+          searchNext.disabled = true;
+        } else {
+          searchCount.classList.remove("no-match");
+          currentHit = 0;
+          jumpTo(currentHit);
+        }
+      }
+
+      function jumpTo(index) {
+        if (!allHits.length) return;
+        allHits.forEach((m) => m.classList.remove("current"));
+        const mark = allHits[index];
+        const section = mark.closest(".article-section");
+        if (section && !section.classList.contains("active")) {
+          document
+            .querySelectorAll(".article-section")
+            .forEach((s) => s.classList.remove("active"));
+          document
+            .querySelectorAll(".sidebar-nav a")
+            .forEach((a) => a.classList.remove("active"));
+          section.classList.add("active");
+          const pageId = section.id.replace("page-", "");
+          const navLink = document.querySelector(
+            '.sidebar-nav a[data-page="' + pageId + '"]',
+          );
+          if (navLink) navLink.classList.add("active");
+        }
+        mark.classList.add("current");
+        mark.scrollIntoView({ behavior: "smooth", block: "center" });
+        searchCount.textContent = index + 1 + " / " + allHits.length + "件";
+        searchCount.classList.remove("no-match");
+        searchPrev.disabled = index <= 0;
+        searchNext.disabled = index >= allHits.length - 1;
+      }
+
+      function clearSearch() {
+        searchInput.value = "";
+        document.querySelectorAll(".article-section").forEach((sec) => {
+          sec.innerHTML = pageOriginals[sec.id];
+        });
+        allHits = [];
+        currentHit = -1;
+        searchControls.classList.remove("visible");
+        searchCount.classList.remove("visible");
+        searchCount.classList.remove("no-match");
+      }
+
+      let debounceTimer;
+      searchInput.addEventListener("input", (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => runSearch(e.target.value.trim()), 200);
+      });
+
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (e.shiftKey) {
+            if (currentHit > 0) {
+              currentHit--;
+              jumpTo(currentHit);
+            }
+          } else {
+            if (currentHit < allHits.length - 1) {
+              currentHit++;
+              jumpTo(currentHit);
+            }
+          }
+        }
+        if (e.key === "Escape") {
+          clearSearch();
+          searchInput.blur();
+        }
+      });
+
+      searchNext.addEventListener("click", () => {
+        if (currentHit < allHits.length - 1) {
+          currentHit++;
+          jumpTo(currentHit);
+        }
+      });
+      searchPrev.addEventListener("click", () => {
+        if (currentHit > 0) {
+          currentHit--;
+          jumpTo(currentHit);
+        }
+      });
+      searchClear.addEventListener("click", () => {
+        clearSearch();
+        searchInput.focus();
+      });
+    </script>
+  </body>
+</html>
