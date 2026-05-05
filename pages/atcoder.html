@@ -1,0 +1,266 @@
+<h1>ABC A–D 典型アルゴリズム チートシート</h1>
+<p>毎日の復習用 · A〜D問題で使われる全パターン網羅</p>
+
+<h2>よく使うテンプレ</h2>
+<p>コンテスト開始時にそのまま使えるテンプレート。</p>
+
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+using vi = vector&lt;int&gt;;
+using vl = vector&lt;ll&gt;;
+#define rep(i,n) for(int i=0;i&lt;(n);i++)
+#define all(v) v.begin(),v.end()
+const ll INF = 1e18;
+const ll MOD = 1e9+7;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    // ここに解答
+}</code></pre>
+
+<h2>A・B 基礎パターン</h2>
+
+<h3>条件分岐・四則演算</h3>
+<p>
+  入力を読んで計算・場合分けするだけ。オーバーフローに注意（long longを使う）。
+</p>
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+int main() {
+    long long a, b;
+    cin &gt;&gt; a &gt;&gt; b;
+    if (a &gt; b) cout &lt;&lt; "Yes" &lt;&lt; endl;
+    else       cout &lt;&lt; "No"  &lt;&lt; endl;
+}</code></pre>
+
+<h3>文字列操作</h3>
+<pre><code>string s;
+cin &gt;&gt; s;
+int n = s.size();
+char c = s[i];
+string sub = s.substr(l, r - l);
+if (s.find("abc") != string::npos) { ... }</code></pre>
+
+<h3>全探索（ループ）</h3>
+<pre><code>for (int i = 0; i &lt; n; i++) {
+    for (int j = i+1; j &lt; n; j++) {
+    }
+}</code></pre>
+
+<h3>ソート</h3>
+<pre><code>vector&lt;int&gt; a(n);
+sort(a.begin(), a.end());
+sort(a.begin(), a.end(), greater&lt;int&gt;());
+
+sort(a.begin(), a.end(), [](auto x, auto y){
+    return x.first &lt; y.first;
+});</code></pre>
+
+<h3>map / set</h3>
+<pre><code>map&lt;int,int&gt; cnt;
+for (auto x : a) cnt[x]++;
+
+set&lt;int&gt; S(a.begin(), a.end());
+if (S.count(x)) {}
+
+unordered_map&lt;int,int&gt; mp;</code></pre>
+
+<h3>mod</h3>
+<pre><code>const long long MOD = 1e9+7;
+long long ans = 0;
+ans = (ans + x) % MOD;
+ans = (ans * y) % MOD;
+ans = ((ans - x) % MOD + MOD) % MOD;</code></pre>
+
+<h2>C問題</h2>
+
+<h3>累積和</h3>
+<pre><code>vector&lt;long long&gt; pre(n+1,0);
+for(int i=0;i&lt;n;i++) pre[i+1]=pre[i]+a[i];
+long long sum = pre[r]-pre[l];</code></pre>
+
+<h3>二分探索</h3>
+<pre><code>sort(a.begin(),a.end());
+auto it = lower_bound(a.begin(),a.end(),x);
+
+long long lo=0,hi=1e18;
+while(lo&lt;hi){
+    long long mid=(lo+hi+1)/2;
+    if(check(mid)) lo=mid;
+    else hi=mid-1;
+}</code></pre>
+
+<h3>貪欲法</h3>
+<pre><code>sort(intervals.begin(), intervals.end(),
+[](auto a, auto b){ return a.second &lt; b.second; });
+
+int cnt=0,last=-1;
+for(auto [l,r]:intervals){
+    if(last&lt;=l){cnt++;last=r;}
+}</code></pre>
+
+<h3>bit全探索</h3>
+<pre><code>for(int s=0;s&lt;(1&lt;&lt;n);s++){
+    for(int i=0;i&lt;n;i++){
+        if(s&gt;&gt;i&amp;1){}
+    }
+}</code></pre>
+
+<h3>順列全探索</h3>
+<pre><code>vector&lt;int&gt; p={0,1,2};
+do{
+}while(next_permutation(p.begin(),p.end()));</code></pre>
+
+<h3>priority_queue</h3>
+<pre><code>priority_queue&lt;int&gt; pq;
+pq.push(5);
+pq.pop();
+
+priority_queue&lt;int,vector&lt;int&gt;,greater&lt;int&gt;&gt; minpq;</code></pre>
+
+<h3>素数</h3>
+<pre><code>bool isPrime(long long n){
+    if(n&lt;2)return false;
+    for(long long i=2;i*i&lt;=n;i++)
+        if(n%i==0)return false;
+    return true;
+}</code></pre>
+
+<h3>エラトステネス</h3>
+<pre><code>vector&lt;bool&gt; isp(N+1,true);
+isp[0]=isp[1]=false;
+for(int i=2;i*i&lt;=N;i++)
+ if(isp[i])
+  for(int j=i*i;j&lt;=N;j+=i) isp[j]=false;</code></pre>
+
+<h3>GCD・LCM</h3>
+<pre><code>#include &lt;numeric&gt;
+long long g=gcd(a,b);
+long long l=lcm(a,b);</code></pre>
+
+<h2>D問題</h2>
+
+<h3>DP</h3>
+<pre><code>vector&lt;long long&gt; dp(W+1,0);
+for(int i=0;i&lt;n;i++)
+ for(int j=W;j&gt;=w[i];j--)
+  dp[j]=max(dp[j],dp[j-w[i]]+v[i]);</code></pre>
+
+<h3>BFS</h3>
+<pre><code>vector&lt;int&gt; dist(n,-1);
+queue&lt;int&gt; q;
+dist[s]=0;q.push(s);
+while(!q.empty()){
+ int v=q.front();q.pop();
+ for(int u:graph[v]){
+  if(dist[u]==-1){
+   dist[u]=dist[v]+1;
+   q.push(u);
+  }
+ }
+}</code></pre>
+
+<h3>DFS</h3>
+<pre><code>vector&lt;bool&gt; vis(n,false);
+void dfs(int v){
+ vis[v]=true;
+ for(int u:graph[v])
+  if(!vis[u]) dfs(u);
+}</code></pre>
+
+<h3>Dijkstra</h3>
+<pre><code>vector&lt;long long&gt; dist(n,1e18);
+priority_queue&lt;pair&lt;long long,int&gt;,
+vector&lt;pair&lt;long long,int&gt;&gt;,greater&lt;&gt;&gt; pq;
+
+dist[s]=0;pq.push({0,s});
+while(!pq.empty()){
+ auto [d,v]=pq.top();pq.pop();
+ if(d&gt;dist[v])continue;
+ for(auto [u,w]:graph[v])
+  if(dist[v]+w&lt;dist[u]){
+   dist[u]=dist[v]+w;
+   pq.push({dist[u],u});
+  }
+}</code></pre>
+
+<h3>Union-Find</h3>
+<pre><code>vector&lt;int&gt; par(n);
+iota(par.begin(),par.end(),0);
+
+function&lt;int(int)&gt; find=[&](int x){
+ return par[x]==x?x:par[x]=find(par[x]);
+};
+
+auto unite=[&](int x,int y){
+ par[find(x)]=find(y);
+};</code></pre>
+
+<h3>木DP</h3>
+<pre><code>vector&lt;long long&gt; dp(n,0);
+void dfs(int v,int p){
+ for(int u:graph[v]){
+  if(u==p)continue;
+  dfs(u,v);
+  dp[v]+=dp[u]+1;
+ }
+}</code></pre>
+
+<h3>二次元累積和</h3>
+<pre><code>vector&lt;vector&lt;long long&gt;&gt; pre(H+1,vector&lt;long long&gt;(W+1,0));
+for(int i=1;i&lt;=H;i++)
+ for(int j=1;j&lt;=W;j++)
+  pre[i][j]=a[i][j]+pre[i-1][j]+pre[i][j-1]-pre[i-1][j-1];</code></pre>
+
+<h3>いもす法</h3>
+<pre><code>vector&lt;long long&gt; diff(n+1,0);
+diff[l]+=x;
+diff[r]-=x;
+for(int i=1;i&lt;n;i++) diff[i]+=diff[i-1];</code></pre>
+
+<h3>nCr</h3>
+<pre><code>long long modpow(long long a,long long n){
+ long long r=1;
+ while(n){
+  if(n&amp;1) r=r*a%MOD;
+  a=a*a%MOD;
+  n&gt;&gt;=1;
+ }
+ return r;
+}</code></pre>
+
+<h3>座標圧縮</h3>
+<pre><code>vector&lt;int&gt; xs=a;
+sort(xs.begin(),xs.end());
+xs.erase(unique(xs.begin(),xs.end()),xs.end());</code></pre>
+
+<h3>Stack</h3>
+<pre><code>stack&lt;char&gt; st;
+for(char c:s){
+ if(c=='(') st.push(c);
+ else{
+  if(st.empty()) break;
+  st.pop();
+ }
+}</code></pre>
+
+<h3>bit DP</h3>
+<pre><code>vector&lt;vector&lt;long long&gt;&gt; dp(1&lt;&lt;n,vector&lt;long long&gt;(n,1e18));
+dp[1][0]=0;
+for(int s=0;s&lt;(1&lt;&lt;n);s++)
+ for(int v=0;v&lt;n;v++){
+  if(!(s&gt;&gt;v&amp;1))continue;
+  for(int u=0;u&lt;n;u++)
+   dp[s|(1&lt;&lt;u)][u]=min(dp[s|(1&lt;&lt;u)][u],dp[s][v]+cost[v][u]);
+ }</code></pre>
+
+<h3>LIS</h3>
+<pre><code>vector&lt;int&gt; lis;
+for(int x:a){
+ auto it=lower_bound(lis.begin(),lis.end(),x);
+ if(it==lis.end()) lis.push_back(x);
+ else *it=x;
+}
+int ans=lis.size();</code></pre>
