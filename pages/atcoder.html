@@ -1,31 +1,20 @@
-<h1>ABC A–D 典型アルゴリズム チートシート</h1>
-<p>毎日の復習用 · A〜D問題で使われる全パターン網羅</p>
+<h1>AtCoder Beginner Contest <br>A–D Typical Algorithms Cheat Sheet</br>
 
-<h2>よく使うテンプレ</h2>
-<p>コンテスト開始時にそのまま使えるテンプレート。</p>
+<h2>Template</h2>
 
 <pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 using ll = long long;
-using vi = vector&lt;int&gt;;
-using vl = vector&lt;ll&gt;;
-#define rep(i,n) for(int i=0;i&lt;(n);i++)
-#define all(v) v.begin(),v.end()
 const ll INF = 1e18;
 const ll MOD = 1e9+7;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    // ここに解答
 }</code></pre>
 
-<h2>A・B 基礎パターン</h2>
+<h2>Task A, B</h2>
 
-<h3>条件分岐・四則演算</h3>
-<p>
-  入力を読んで計算・場合分けするだけ。オーバーフローに注意（long longを使う）。
-</p>
+<h3>Conditionals and Arithmetic Operations</h3>
+
 <pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 int main() {
@@ -35,7 +24,7 @@ int main() {
     else       cout &lt;&lt; "No"  &lt;&lt; endl;
 }</code></pre>
 
-<h3>文字列操作</h3>
+<h3>String Manipulation</h3>
 <pre><code>string s;
 cin &gt;&gt; s;
 int n = s.size();
@@ -43,16 +32,16 @@ char c = s[i];
 string sub = s.substr(l, r - l);
 if (s.find("abc") != string::npos) { ... }</code></pre>
 
-<h3>全探索（ループ）</h3>
+<h3>Brute Force (Loop)</h3>
 <pre><code>for (int i = 0; i &lt; n; i++) {
     for (int j = i+1; j &lt; n; j++) {
     }
 }</code></pre>
 
-<h3>ソート</h3>
+<h3>Sorting</h3>
 <pre><code>vector&lt;int&gt; a(n);
 sort(a.begin(), a.end());
-sort(a.begin(), a.end(), greater&lt;int&gt;());
+sort(a.rbegin(), a.rend());
 
 sort(a.begin(), a.end(), [](auto x, auto y){
     return x.first &lt; y.first;
@@ -72,75 +61,102 @@ unordered_map&lt;int,int&gt; mp;</code></pre>
 long long ans = 0;
 ans = (ans + x) % MOD;
 ans = (ans * y) % MOD;
-ans = ((ans - x) % MOD + MOD) % MOD;</code></pre>
+// If ans becomes negative, convert ans to a positive value and place it in the appropriate position.
+ans = (ans - x + MOD) % MOD;</code></pre>
 
-<h2>C問題</h2>
+<h2>Task C</h2>
 
-<h3>累積和</h3>
+<h3>Cumulative Sum</h3>
+<p>Accumulate the sum from the beginning step by step.</p>
 <pre><code>vector&lt;long long&gt; pre(n+1,0);
 for(int i=0;i&lt;n;i++) pre[i+1]=pre[i]+a[i];
 long long sum = pre[r]-pre[l];</code></pre>
 
-<h3>二分探索</h3>
+<h3>Binary Search</h3>
+<p>Check the middle of the interval. If the condition is satisfied, move the left boundary to the middle; otherwise, move the right boundary to one position left of the middle.</p>
 <pre><code>sort(a.begin(),a.end());
 auto it = lower_bound(a.begin(),a.end(),x);
-
-long long lo=0,hi=1e18;
+</code></pre>
+<p></p>
+<pre><code>long long lo=0,hi=1e18;
+// Stop when lo == hi.
+// From the beginning, determine how far is valid (ok).
 while(lo&lt;hi){
+    // Add +1 because without it, the loop would become infinite.
     long long mid=(lo+hi+1)/2;
+    // Since +1 was already applied on the previous line, do not add it here.
     if(check(mid)) lo=mid;
+    // Subtract -1 to ensure it does not overlap with mid.
     else hi=mid-1;
 }</code></pre>
 
-<h3>貪欲法</h3>
-<pre><code>sort(intervals.begin(), intervals.end(),
+<h3>Greedy Algorithm</h3>
+<p>Continuously choose the best option at each step.</p>
+<pre><code>// Sort the intervals in order of earliest end time.
+sort(intervals.begin(), intervals.end(),
 [](auto a, auto b){ return a.second &lt; b.second; });
-
+// Compare the start and end from the beginning to ensure they do not overlap.
 int cnt=0,last=-1;
 for(auto [l,r]:intervals){
     if(last&lt;=l){cnt++;last=r;}
 }</code></pre>
 
-<h3>bit全探索</h3>
+<h3>Bitmask Enumeration</h3>
+<p>Enumerate all possible ways of selecting items from n elements.</p>
 <pre><code>for(int s=0;s&lt;(1&lt;&lt;n);s++){
     for(int i=0;i&lt;n;i++){
         if(s&gt;&gt;i&amp;1){}
     }
 }</code></pre>
 
-<h3>順列全探索</h3>
+<h3>Permutation Enumeration</h3>
+<p>Try all possible orderings (permutations).</p>
 <pre><code>vector&lt;int&gt; p={0,1,2};
 do{
 }while(next_permutation(p.begin(),p.end()));</code></pre>
 
 <h3>priority_queue</h3>
-<pre><code>priority_queue&lt;int&gt; pq;
+<p>Efficiently handle maximum and minimum values.</p>
+<pre><code>// Enable handling of maximum values.
+priority_queue&lt;int&gt; pq;
+// Enable handling of minimum values.
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;
+
 pq.push(5);
-pq.pop();
+// Retrieve the maximum or minimum value.
+pq.top();
+// Delete the maximum or minimum value.
+pq.pop();</code></pre>
 
-priority_queue&lt;int,vector&lt;int&gt;,greater&lt;int&gt;&gt; minpq;</code></pre>
-
-<h3>素数</h3>
+<h3>Prime Number</h3>
+<p>Check all numbers up to √n to determine whether n is divisible.</p>
 <pre><code>bool isPrime(long long n){
     if(n&lt;2)return false;
+    // If n has any divisor, at least one of them is always less than or equal to √n.
     for(long long i=2;i*i&lt;=n;i++)
         if(n%i==0)return false;
     return true;
 }</code></pre>
 
-<h3>エラトステネス</h3>
-<pre><code>vector&lt;bool&gt; isp(N+1,true);
+<h3>Sieve of Eratosthenes</h3>
+<p>Find all prime numbers from 1 to N. Eliminate all numbers that are not prime.</p>
+<pre><code>// Assume all numbers from 0 to N are prime (true) initially.
+vector&lt;bool&gt; isp(N+1,true);
+// Remove 0 and 1, since they are not prime from the start.
 isp[0]=isp[1]=false;
 for(int i=2;i*i&lt;=N;i++)
  if(isp[i])
+  // Check multiples (e.g., (2), 4, 6 and (3), 6, 9).
   for(int j=i*i;j&lt;=N;j+=i) isp[j]=false;</code></pre>
 
 <h3>GCD・LCM</h3>
-<pre><code>#include &lt;numeric&gt;
+<p>Get the greatest common divisor and the least common multiple.</p>
+<pre><code>// #include &lt;numeric&gt; is included in #include &lt;bits/stdc++.h&gt;.
+#include &lt;numeric&gt;
 long long g=gcd(a,b);
 long long l=lcm(a,b);</code></pre>
 
-<h2>D問題</h2>
+<h2>Task D</h2>
 
 <h3>DP</h3>
 <pre><code>vector&lt;long long&gt; dp(W+1,0);
@@ -198,7 +214,7 @@ auto unite=[&](int x,int y){
  par[find(x)]=find(y);
 };</code></pre>
 
-<h3>木DP</h3>
+<h3>Dynamic Programming on Trees</h3>
 <pre><code>vector&lt;long long&gt; dp(n,0);
 void dfs(int v,int p){
  for(int u:graph[v]){
@@ -208,13 +224,13 @@ void dfs(int v,int p){
  }
 }</code></pre>
 
-<h3>二次元累積和</h3>
+<h3>2D Prefix Sum</h3>
 <pre><code>vector&lt;vector&lt;long long&gt;&gt; pre(H+1,vector&lt;long long&gt;(W+1,0));
 for(int i=1;i&lt;=H;i++)
  for(int j=1;j&lt;=W;j++)
   pre[i][j]=a[i][j]+pre[i-1][j]+pre[i][j-1]-pre[i-1][j-1];</code></pre>
 
-<h3>いもす法</h3>
+<h3>Imos Method</h3>
 <pre><code>vector&lt;long long&gt; diff(n+1,0);
 diff[l]+=x;
 diff[r]-=x;
@@ -231,7 +247,7 @@ for(int i=1;i&lt;n;i++) diff[i]+=diff[i-1];</code></pre>
  return r;
 }</code></pre>
 
-<h3>座標圧縮</h3>
+<h3>Coordinate Compression</h3>
 <pre><code>vector&lt;int&gt; xs=a;
 sort(xs.begin(),xs.end());
 xs.erase(unique(xs.begin(),xs.end()),xs.end());</code></pre>
